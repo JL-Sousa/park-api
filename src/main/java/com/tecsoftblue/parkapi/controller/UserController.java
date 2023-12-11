@@ -6,6 +6,7 @@ import com.tecsoftblue.parkapi.dto.UserResponseDTO;
 import com.tecsoftblue.parkapi.dto.mapper.UserMapper;
 import com.tecsoftblue.parkapi.entities.User;
 import com.tecsoftblue.parkapi.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDTO> create(
-            @RequestBody CreateUserDTO request, UriComponentsBuilder uriBuilder) {
+            @Valid @RequestBody CreateUserDTO request, UriComponentsBuilder uriBuilder) {
         User user = userService.save(UserMapper.toUser(request));
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(UserMapper.toDTO(user));
@@ -42,7 +43,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updatePassword(
-            @PathVariable Long id, @RequestBody UserPasswordDTO dto) {
+            @PathVariable Long id, @Valid @RequestBody UserPasswordDTO dto) {
         User user = userService.editPassword(
                 id,
                 dto.getCurrentPassword(),
