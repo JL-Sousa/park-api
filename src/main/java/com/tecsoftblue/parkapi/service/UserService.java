@@ -1,8 +1,12 @@
 package com.tecsoftblue.parkapi.service;
 
 import com.tecsoftblue.parkapi.entities.User;
+import com.tecsoftblue.parkapi.exception.EntityNotFoundException;
+import com.tecsoftblue.parkapi.exception.PasswordInvalidException;
+import com.tecsoftblue.parkapi.exception.UsernameUniqueViolationException;
 import com.tecsoftblue.parkapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,14 +20,22 @@ public class UserService {
 
     @Transactional
     public User save(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            throw new UsernameUniqueViolationException(
+                    String.format("Username %s já cadastrado", user.getUsername())
+            );
+        }
+
     }
 
 
     @Transactional(readOnly = true)
     public User getById(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado.")
+                () -> new EntityNotFoundException(
+                        String.format("Usuário id=%s não encontrado", id))
         );
     }
 
@@ -40,11 +52,11 @@ public class UserService {
             String confirmPassword) {
 
         if(!newPassword.equals(confirmPassword)) {
-            throw new RuntimeException("Nova senha não confere com confirmação de senha.");
+            throw new PasswordInvalidException("Nova senha não confere com confirmação de senha.");
         }
         User user = getById(id);
         if(!user.getPassword().equals(currentPassword)) {
-            throw new RuntimeException("Sua senha não confere.");
+            throw new PasswordInvalidException("Sua senha não confere.");
         }
         user.setPassword(newPassword);
         return user;
