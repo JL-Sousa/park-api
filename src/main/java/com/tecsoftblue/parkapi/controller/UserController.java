@@ -128,8 +128,13 @@ public class UserController {
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class)
-                            )
-                    )
+                            )),
+                    @ApiResponse(responseCode = "422",
+                            description = "Campos invalidos ou mal formatados",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            ))
             }
     )
     @PatchMapping("/{id}")
