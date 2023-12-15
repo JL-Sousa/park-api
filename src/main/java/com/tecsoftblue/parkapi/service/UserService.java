@@ -1,6 +1,6 @@
 package com.tecsoftblue.parkapi.service;
 
-import com.tecsoftblue.parkapi.entities.User;
+import com.tecsoftblue.parkapi.entities.Usuario;
 import com.tecsoftblue.parkapi.exception.EntityNotFoundException;
 import com.tecsoftblue.parkapi.exception.PasswordInvalidException;
 import com.tecsoftblue.parkapi.exception.UsernameUniqueViolationException;
@@ -19,7 +19,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User save(User user) {
+    public Usuario save(Usuario user) {
         try {
             return userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
@@ -32,7 +32,7 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public User getById(Long id) {
+    public Usuario getById(Long id) {
         return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(
                         String.format("Usuário id=%s não encontrado", id))
@@ -40,12 +40,12 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> getAll() {
+    public List<Usuario> getAll() {
         return userRepository.findAll();
     }
 
     @Transactional
-    public User editPassword(
+    public Usuario editPassword(
             Long id,
             String currentPassword,
             String newPassword,
@@ -54,7 +54,7 @@ public class UserService {
         if(!newPassword.equals(confirmPassword)) {
             throw new PasswordInvalidException("Nova senha não confere com confirmação de senha.");
         }
-        User user = getById(id);
+        Usuario user = getById(id);
         if(!user.getPassword().equals(currentPassword)) {
             throw new PasswordInvalidException("Sua senha não confere.");
         }
@@ -62,4 +62,16 @@ public class UserService {
         return user;
     }
 
+    @Transactional(readOnly = true)
+    public Usuario getByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new EntityNotFoundException(
+                        String.format("Usuário com %s não encontrado", username))
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario.Role  getRoleByUsername(String username) {
+        return userRepository.findRoleByUsername(username);
+    }
 }

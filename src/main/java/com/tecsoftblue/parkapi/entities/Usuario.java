@@ -1,8 +1,6 @@
 package com.tecsoftblue.parkapi.entities;
 
-import com.tecsoftblue.parkapi.enums.Role;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +12,8 @@ import java.util.Objects;
 @Getter @Setter @NoArgsConstructor
 @Entity
 @Table(name = "tb_usuarios")
-public class User implements Serializable {
+public class Usuario implements Serializable {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,11 +42,17 @@ public class User implements Serializable {
     @Column(name = "modificado_por")
     private String modifiedBy;
 
+    public enum Role {
+
+        ROLE_ADMIN,
+        ROLE_CLIENTE
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        Usuario user = (Usuario) o;
         return Objects.equals(id, user.id);
     }
 
