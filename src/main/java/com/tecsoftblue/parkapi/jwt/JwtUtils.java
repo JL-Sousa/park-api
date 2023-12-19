@@ -21,7 +21,7 @@ public class JwtUtils {
     public static final String SECRET_KEY = "eb827667ea2b48acf0b63cdad3cd5ea9";
     public static final long EXPIRE_DAYS = 0;
     public static final long EXPIRE_HOURS = 0;
-    public static final long EXPIRE_MINUTES = 2;
+    public static final long EXPIRE_MINUTES = 30;
 
     private static Key generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));

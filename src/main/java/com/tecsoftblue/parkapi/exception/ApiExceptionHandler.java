@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -80,6 +82,25 @@ public class ApiExceptionHandler {
     ) {
 
         HttpStatus statusCode = HttpStatus.BAD_REQUEST;
+
+        log.error("Api Error - ", ex);
+        return ResponseEntity
+                .status(statusCode)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(
+                        request,
+                        statusCode,
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedException(
+            AccessDeniedException ex,
+            HttpServletRequest request
+    ) {
+
+        HttpStatus statusCode = HttpStatus.FORBIDDEN;
 
         log.error("Api Error - ", ex);
         return ResponseEntity
